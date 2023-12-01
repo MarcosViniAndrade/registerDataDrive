@@ -1,0 +1,90 @@
+#Expected data structure from Pipefy:
+{"data":
+    {"cards":
+        {"edges":
+            [
+                {"node":
+                    {"fields":
+                        [
+                            {"name":"motorista_nome","value":"Luiz Paulo Ribeiro"},
+                            {"name":"motorista_cnh","value":"0324073511"},
+                            {"name":"motorista_cpf","value":"38220466719},
+                            {"name":"motorista_cnh_uf","value":"RJ"},
+                        ]
+                    }
+                },
+                {"node":
+                    {"fields":
+                        [
+                            {"name":"motorista_nome","value":"Luiz Paulo Ribeiro"},
+                            {"name":"motorista_cnh","value":"0324073511"},
+                            {"name":"motorista_cpf","value":"38220466719},
+                            {"name":"motorista_cnh_uf","value":"RJ"},
+                        ]
+                    }
+                },
+                {"node":
+                    {"fields":
+                        [
+                            {"name":"motorista_nome","value":"Luiz Paulo Ribeiro"},
+                            {"name":"motorista_cnh","value":"0324073511"},
+                            {"name":"motorista_cpf","value":"38220466719},
+                            {"name":"motorista_cnh_uf","value":"RJ"},
+                        ]
+                    }
+                },
+            ]
+        }
+    }
+}
+
+#Json structure required to register a driver:
+{
+"token":"{{TOKEN}}",
+"key": "{{CACHE-KEY}}",
+"sandbox": true,
+"motorista_nome": "Luiz Paulo Ribeiro",
+"motorista_cpf": "38220466719",
+"motorista_cnh": "0324073511",
+"motorista_cnh_uf": "RJ",
+}
+
+
+#Json structure required to register a driver with complementary informations:
+{
+"token":"{{TOKEN}}",
+"key": "{{CACHE-KEY}}",
+"sandbox": true,
+"motorista_nome": "Luiz Paulo Ribeiro",
+"motorista_nascimento":"1958-03-17",
+"motorista_cpf": "38220466719",
+"motorista_rg":"0324443511",
+"motorista_cnh": "0324073511",
+"motorista_cnh_cat":"4",
+"motorista_cnh_tipo":"1",
+"motorista_cnh_trab":"0",
+"motorista_cnh_uf": "RJ",
+"motorista_cnh_data1": "2014-03-11",
+"motorista_cnh_data2": "2019-03-11",
+"motorista_cnh_data3": "1978-08-14",
+"motorista_obs": "Motorista importado pela API",
+"motorista_email":"email@email.com",
+"motorista_sexo":"1",
+"id_estado_civil":"3",
+"id_instrucao":"2",
+"motorista_profissao":"Aposentado",
+"motorista_cargo":"Piloto de Sofá",
+"motorista_naturalidade":"Bahia",
+"motorista_nacionalidade":"Brasileiro",
+"motorista_mae_nome":"Lurdes Santos Silva",
+"motorista_mae_cpf":"2541598423",
+"motorista_pai_nome":"Jorge Amado Silva",
+"motorista_pai_cpf":"12349653248",
+"motorista_cep":"22281-080",
+"motorista_end":"Rua Simão Silva",
+"motorista_end_num":"47",
+"motorista_end_comp":"Casa 12",
+"motorista_end_bairro":"Copacabana",
+"motorista_end_cidade":"Rio de Janeiro",
+"motorista_end_uf":"RJ"
+}

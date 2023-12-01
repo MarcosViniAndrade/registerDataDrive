@@ -1,0 +1,1125 @@
+{
+	"info": {
+		"_postman_id": "59a6be77-04fd-4cf9-9d50-e1cfaa48384e",
+		"name": "DATADRIVE - API EXTERNA",
+		"description": "<img src=\"https://content.pstmn.io/e2619e26-a54b-41a6-a89f-6bbb1e84bd56/ZGF0YWRyaXZlLnBuZw==\" width=\"400\" height=\"99\">\n\nBem vindo à API simples de gestão externa de motoristas, veículos e acompanhamentos do DataDrive. O objetivo da API é fornecer um canal para cadastros automatizados no DataDrive.\n\nA gestão completa dos dados poderá ser feito pelo site [http://datadrive.com.br/app.](https://)\n\nSuporte Produtos Infront: Whatsapp 21 3970-6868 - Produto DATADRIVE\n\nIMPORTANTE:\n\nA API não foi desenvolvida para consultas em tempo real. Ela não deve ser usada na renderização de interfaces. Por isso os métodos de listagem são limitados. As informações devem ser armazenadas e orquestradas na base de dados do parceiro.\n\nRecomenda-se a criação de cronjobs para as interações junto a API. Obs: O padrão de nomenclatura de campos e valores foi simplificado para não refletir os padrões internos do DataDrive.\n\nIMPORTANTE:\n\nConforme o contrato do DataDrive, a utilização da API está limitada a integração com sistemas locais no ambiente interno do parceiro. Qualquer utilização fora deste propósito será considerada quebra de contrato e encerramento do mesmo.\n\nSANDBOX:\n\nEsta API externa utiliza a estrutura pré-existente da API interna do aplicativo do DataDrive. Ela não prevê um ambiente de testes em separado, o chamado SANDBOX. Para viabilizar o desenvolvimento dos parceiros, principalmente na questão dos testes, incluimos nas rotinas de cadastros da API a opção de enviar o valor \"sandbox\":true. Esse envio desabilita a gravação na base de dados mas a solicitação segue todas as rotinas de validação.\n\nPADRÃO DO RETORNO DAS REQUISIÇÕES:\n\nA API retorna por padrão uma ARRAY com os seguintes campos:\n\n- status - 1 = sucesso 0 = falha;\n- status_code - Código do ocorrido;\n- status_msg - Descrição do ocorrido;\n- data - Retorno de informações caso necessário\n    \n\nObs: Em caso de erro na validação de dados encriptados API retornará NULL.\n\nPADRÃO STATUS CODE:\n\n- 1 = Request: Válido;\n- 2 = Request: Válido (SandBox);\n- 3 = Request: Erro Estrutural;\n- 4 = Request: Falha nos dados de Pesquisa;\n- 5 = Conta de Acesso: Erro de Credenciais;\n- 6 = Conta de Acesso: Status/Setup Inválido;\n- 7 = Conta de Acesso: Status de Inadimplência;\n- 8 = Cadastro: Já existe registro anterior;\n- 9 = Cadastro/Atualização: Falha na validação dos dados;\n- 10 = Cadastro/Atualização: Ação desabilitada no momento\n    \n\nLOG DE ACÕES\n\nAs ações realizadas pela API serão registradas no LOG do usuário utilizado no método user-cache-key e poderão ser auditadas na interface normal do DataDrive.\n\nWEBHOOK\n\nA API fornece um WEBHOOK para otimização da comunicão entre sistemas. Caso habilitado o WEBHOOK fará chamadas ao endpoint do parceiro. Caso o endpoint não retorne status 200, o WEBHOOK fará 2 novas tentativas com 24horas de intervalo. Veja maiores detalhes no método webhook.\n\n<img src=\"https://content.pstmn.io/e69a976d-953f-483f-947e-5e38b593cf8d/aW5mcm9udDByb2RhcGUuanBn\">",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31460369"
+	},
+	"item": [
+		{
+			"name": "ADM",
+			"item": [
+				{
+					"name": "API Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"user\": \"4qs6yzvda9s87xcf9yz1lqg3q\"}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://www.datadrive.com.br/api/dd-api/api-login",
+							"protocol": "http",
+							"host": [
+								"www",
+								"datadrive",
+								"com",
+								"br"
+							],
+							"path": [
+								"api",
+								"dd-api",
+								"api-login"
+							]
+						},
+						"description": "Método para gerar o KEY de acesso à API. Este KEY será enviado nas próximas requisições e tem duração de até 6 horas.\n\nPara realizar o login informe o TOKEN da empresa e o TOKEN do usuário.\n\nSolicite o token da empresa para seu gerente de contas no DataDrive. O token do usuário é gerado através da interface web no menu \"Administração > Configurações Gerais > Opções\".\n\nIMPORTANTE:\n\nNão gere um KEY para cada requisição subsequente na API. Encapsule sua comunicação complexa com a API em apenas uma chamada do KEY.\n\nIMPORTANTE:\n\nAs ações desempenhadas na API serão armazenadas no LOG do usuário dono do token de usuário utilizado no login. A auditoria deverá ser realziada na interface web."
+					},
+					"response": []
+				},
+				{
+					"name": "API Login Info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/api-login-info",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"api-login-info"
+							]
+						},
+						"description": "Método para visualização do endereço do webhook configurado no ambiente.\n\n<img src=\"https://content.pstmn.io/e5039f1f-1edd-4ba5-a272-b33d13f0de5d/d2ViaG9vay5qcGc=\">\n\nO webhook enviará comunicações para sua estrutura em formato POST para as seguintes ações/eventos do DataDrive:\n\n- Alerta de Novidades em Acompanhamento;\n    \n- Alerta de Falha Crítica em Acompanhamento;\n    \n- Alerta de Falha Crítica em Registro de Login;\n    \n\nA seguir a estrutura do retorno POST do webhook:\n\n``` json\n{\n\t\"tipo\": \"3\",\n\t\"msg\": \"Falha Crítica em Acompanhamento\",\n\t\"id\": \"YXNtSndMaVExRDFKdWQ0NmxYVklGUT09\"\n}\n\n ```\n\ntipo: 1 = Novidade, 2 = Falha Crítica Acompanhamento, 3 = Falha Crítica Login\n\nmsg: Mensagem\n\nid: Identificação da entidade, no caso, os tipos 1 e 2 são o ID do acompanhamento e o tipo 3 o ID do login na API."
+					},
+					"response": []
+				},
+				{
+					"name": "Webhook Info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/webhook-info",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"webhook-info"
+							]
+						},
+						"description": "Método para visualização do endereço do webhook configurado no ambiente.\n\n<img src=\"https://content.pstmn.io/e5039f1f-1edd-4ba5-a272-b33d13f0de5d/d2ViaG9vay5qcGc=\">\n\nO webhook enviará comunicações para sua estrutura em formato POST para as seguintes ações/eventos do DataDrive:\n\n- Alerta de Novidades em Acompanhamento;\n- Alerta de Falha Crítica em Acompanhamento;\n- Alerta de Falha Crítica em Registro de Login;\n    \n\nA seguir a estrutura do retorno POST do webhook:\n\n``` json\n{\n    \"tipo\": \"3\",\n    \"msg\": \"Falha Crítica em Acompanhamento\",\n    \"id\": \"YXNtSndMaVExRDFKdWQ0NmxYVklGUT09\"\n}\n\n ```\n\ntipo: 1 = Novidade, 2 = Falha Crítica Acompanhamento, 3 = Falha Crítica Login\n\nmsg: Mensagem\n\nid: Identificação da entidade, no caso, os tipos 1 e 2 são o ID do acompanhamento e o tipo 3 o ID do login na API.\n\nO webhook não é realizado em tempo real. No momento que a ação ocorrer será feito o agendamento no webhook e este será executado de acordo com a carga de processamento do DataDrive. O webhook espera um resultado com status 200 para confirmação.\n\nCaso o endpoint não responda com status 200 serão feitas mais duas tentativascom 24 horas de intervalo entre elas. Caso as 3 tentivas não obtenham sucesso, o webhook vai considerar falha a comunicação e encerará o processo. Nesse caso a API fornece métodos para recuperar as informações (ex: acomp-fail )."
+					},
+					"response": []
+				},
+				{
+					"name": "Webhook Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\":  false,\n\"webhook\": \"https://seudominio.com.br/app/hooker/webhook-seltest.php\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/webhook-edit",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"webhook-edit"
+							]
+						},
+						"description": "Método para edição do endereço do WebHook\n\n``` javascript\n{\n   \"sandbox\":  false,\n   \"webhook\": \"https://seu-dominio.com.br/return/webhook-dd.php\"\n}\n\n ```"
+					},
+					"response": []
+				}
+			],
+			"description": "Autenticação do acesso à API e gestão de webhooks.\n\nLOGIN\n\nO login na API é feito através do envio do Token da empresa junto com o Token do usuário. O token da empresa é fornecido na contratação do DataDrive e o token do usuário é gerado pela interface web no menu \"Administração\", em \"Configurações Gerais >> Opções\". O login com sucesso vai retornar o KEY para utilização nas requisições subsequentes. Mais informações na documentação do método.\n\nPOSTMAN:\n\nEste projeto no Postman está usando VARIAVEIS nos campos KEY dos exemplos. Armaze o valor do KEY gerado no ambiente para facilitar as requisições de testes.\n\n<img src=\"https://content.pstmn.io/7e52f4ef-571f-4820-9c6e-5a1f2e8f1840/YXBpLXZhcmlhYmxlcy5qcGc=\" alt=\"\">\n\nWEBHOOK\n\nA API também fornece o método WEBHOOK para gerenciar a URL da chamada de retorno das seguintes ações/eventos:\n\n- Alerta de Novidades em Acompanhamento\n- Alerta de Falha Crítica em Acompanhamento\n- Alerta de Falha Crítica em Registro de Login"
+		},
+		{
+			"name": "MOTORISTA",
+			"item": [
+				{
+					"name": "Mot Estrutura",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/mot-estrutura",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"mot-estrutura"
+							]
+						},
+						"description": "Método gerador de documentação sobre os campos do cadatro dos motoristas. São eles:\n\n- motorista_nome\\*\n- motorista_nascimento\n- motorista_cpf\\*\n- motorista_rg\n- motorista_cnh\\*\n- motorista_cnh_cat\n- motorista_cnh_tipo\n- motorista_cnh_trab\n- motorista_cnh_uf\\*\n- motorista_cnh_data1\n- motorista_cnh_data2\n- motorista_cnh_data3\n- motorista_obs\n- motorista_email\n- motorista_sexo\n- id_estado_civil\n- id_instrucao\n- motorista_profissao\n- motorista_cargo\n- motorista_naturalidade\n- motorista_nacionalidade\n- motorista_mae_nome\n- motorista_mae_cpf\n- motorista_pai_nome\n- motorista_pai_cpf\n- motorista_cep\n- motorista_end\n- motorista_end_num\n- motorista_end_comp\n- motorista_end_bairro\n- motorista_end_cidade\n- motorista_end_uf\n    \n\nAs informações estruturais são utilizadas pelo DataDrive mas também podem auxiliar sobre o entendimento do formato e previsão do dados trocados com a API. São elas:\n\n- tipo - Tipo do campo;\n- formato - Formato do campo;\n- null - Aceita não envio.\n- skip_valida - Valor para skip de validação;\n- valida - Validação automática;\n- desc - Descrição do campo;\n- select - Opções de preenchimento no caso de formato = select;\n    \n\nExemplo de retorno:\n\n``` json\n\"motorista_cnh_cat\": {\n            \"tipo\": \"info\",\n            \"formato\": \"select\",\n            \"null\": true,\n            \"skip_valida\": \"\",\n            \"valida\": \"cnh_cat_list\",\n            \"desc\": \"Categoria da CNH\",\n            \"select\": {\n                \"1\": \"N/A\",\n                \"2\": \"ACC\",\n                \"3\": \"A\",\n                \"4\": \"B\",\n                \"5\": \"C\",\n                \"6\": \"D\",\n                \"7\": \"AB\",\n                \"8\": \"AC\",\n                \"9\": \"AD\",\n                \"10\": \"AD\",\n                \"11\": \"E\"\n            }\n        }\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Mot Cad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": false,\n\"motorista_nome\": \"Luiz Paulo Ribeiro\",\n\"motorista_nascimento\":\"1958-03-17\",\n\"motorista_cpf\": \"38220466719\", \n\"motorista_rg\":\"0324443511\",\n\"motorista_cnh\": \"0324073511\",\n\"motorista_cnh_cat\":\"4\",\n\"motorista_cnh_tipo\":\"1\",\n\"motorista_cnh_trab\":\"0\",\n\"motorista_cnh_uf\": \"RJ\",\n\"motorista_cnh_data1\": \"2014-03-11\",\n\"motorista_cnh_data2\": \"2019-03-11\",\n\"motorista_cnh_data3\": \"1978-08-14\",\n\"motorista_obs\": \"Motorista importado pela API\",\n\"motorista_email\":\"email@email.com\",\n\"motorista_sexo\":\"1\",\n\"id_estado_civil\":\"3\",\n\"id_instrucao\":\"2\",\n\"motorista_profissao\":\"Aposentado\",\n\"motorista_cargo\":\"Piloto de Sofá\",\n\"motorista_naturalidade\":\"Bahia\",\n\"motorista_nacionalidade\":\"Brasileiro\",\n\"motorista_mae_nome\":\"Lurdes Santos Silva\",\n\"motorista_mae_cpf\":\"2541598423\",\n\"motorista_pai_nome\":\"Jorge Amado Silva\",\n\"motorista_pai_cpf\":\"12349653248\",\n\"motorista_cep\":\"22281-080\",\n\"motorista_end\":\"Rua Simão Silva\",\n\"motorista_end_num\":\"47\",\n\"motorista_end_comp\":\"Casa 12\",\n\"motorista_end_bairro\":\"Copacabana\",\n\"motorista_end_cidade\":\"Rio de Janeiro\",\n\"motorista_end_uf\":\"RJ\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/mot-cad",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"mot-cad"
+							]
+						},
+						"description": "Método de cadastro do motorista dentro do padrão de dados apresentado no método mot-estrutura.\n\nIMPORTANTE:\n\nO método retornará no campo data o ID do motorista registrado no DataDrive. Este ID será usado em todas as interações deste motorista com a API. Registre-o em sua base de dados."
+					},
+					"response": []
+				},
+				{
+					"name": "Mot Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"sandbox\": false,\n  \"id\": \"NkNKMVR4bVBTcnVWbWppeVVmcDVnUT09\",\n  \"motorista_nome\": \"Silvia Rangel\",\n  \"motorista_cpf\": \"710744910788\",\n  \"motorista_cnh\": \"0030125100\",\n  \"motorista_cnh_uf\": \"RJ\",\n  \"motorista_cnh_data3\": \"1974-09-20\",\n  \"motorista_obs\": \"Motorista importado pela API\",\n  \"motorista_sexo\": \"0\",\n  \"motorista_profissao\": \"Médica\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/mot-edit",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"mot-edit"
+							]
+						},
+						"description": "Método de edição do motorista dentro do padrão de dados apresentado no método mot-estrutura.\n\nIMPORTANTE:\n\nEnvie o campo ID com o ID do motorista para identificar o registro desejado para a edição."
+					},
+					"response": []
+				},
+				{
+					"name": "Mot Info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\", \"id\":\"WHZrSTlQUTVVOFYvdDNBcjRkdWVYUT09\"}",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/mot-info",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"mot-info"
+							]
+						},
+						"description": "Método para recuperar dados do motorista através do ID do motorista."
+					},
+					"response": []
+				},
+				{
+					"name": "Mot Del",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\", \"id\":\"WHZrSTlQUTVVOFYvdDNBcjRkdWVYUT09\", \"sandbox\":false}",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/mot-del",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"mot-del"
+							]
+						},
+						"description": "Método de exclusão do motorista através do ID do motorista."
+					},
+					"response": []
+				}
+			],
+			"description": "Métodos de Cadastros, Edição, Consulta e Exclusão de Motoristas\n\n<img src=\"https://content.pstmn.io/ac91e91d-9fbc-4d50-ad83-34422e11fa77/dGVsYS1tb3RvcmlzdGEuanBn\">\n\nIMPORTANTE:  \n\nMétodos que registram gravação de dados na API retornam no campo data o ID do novo registro gerado. Este ID será utilizado em todas futuras interações. É fundamental que você o registre em sua base de dados."
+		},
+		{
+			"name": "VEÍCULO",
+			"item": [
+				{
+					"name": "Veículo Estrutura",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/veic-estrutura",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"veic-estrutura"
+							]
+						},
+						"description": "Método gerador de documentação sobre os campos do cadatro dos veículos. São eles:\n\n- veiculo_nome\\*\n- veiculo_renavam\\*\n- veiculo_placa\\*\n- veiculo_chassi\n- veiculo_ano\n- veiculo_uf\\*\n- veiculo_cor\n- veiculo_proprietario_nome\n- veiculo_proprietario_cpf\n- veiculo_obs\n    \n\nAs informações estruturais são utilizadas pelo DataDrive mas também podem auxiliar sobre o entendimento do formato e previsão do dados trocados com a API. São elas:\n\n- tipo - Tipo do campo;\n- formato - Formato do campo;\n- null - Aceita não envio;\n- skip_valida - Valor para skip de validação;\n- valida - Validação automática;\n- desc - Descrição do campo;\n- select - Opções de preenchimento no caso de formato = select;\n    \n\nExemplo de retorno:\n\n``` json\n\"veiculo_uf\": {\n            \"tipo\": \"info\",\n            \"formato\": \"select\",\n            \"null\": false,\n            \"skip_valida\": \"\",\n            \"valida\": \"not_empty, not_null\",\n            \"desc\": \"UF do Veículo\",\n            \"select\": {\n                \"AC\": \"Acre\",\n                \"AL\": \"Alagoas\",\n                \"AP\": \"Amapá\",\n                \"AM\": \"Amazonas\",\n                \"BA\": \"Bahia\",\n                \"CE\": \"Ceará\",\n                \"DF\": \"Distrito Federal\",\n                \"ES\": \"Espírito Santo\",\n                \"GO\": \"Goiás\",\n                \"MA\": \"Maranhão\",\n                \"MT\": \"Mato Grosso\",\n                \"MS\": \"Mato Grosso do Sul\",\n                \"MG\": \"Minas Gerais\",\n                \"PA\": \"Pará\",\n                \"PB\": \"Paraíba\",\n                \"PR\": \"Paraná\",\n                \"PE\": \"Pernambuco\",\n                \"PI\": \"Piauí\",\n                \"RJ\": \"Rio de Janeiro\",\n                \"RN\": \"Rio Grande do Norte\",\n                \"RS\": \"Rio Grande do Sul\",\n                \"RO\": \"Rondônia\",\n                \"RR\": \"Roraima\",\n                \"SC\": \"Santa Catarina\",\n                \"SP\": \"São Paulo\",\n                \"SE\": \"Sergipe\",\n                \"TO\": \"Tocantins\"\n            }\n        },\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Veículo Cad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": false,\n\"veiculo_nome\": \"RENAULT/CLIO AUT 10 32VS\",\n\"veiculo_renavam\":\"00787230025\",\n\"veiculo_placa\": \"AKA5B56\", \n\"veiculo_chassi\":\"93YLB06053J376336\",\n\"veiculo_ano\": \"2002\",\n\"veiculo_uf\":\"PR\",\n\"veiculo_cor\":\"Verde\",\n\"veiculo_proprietario_nome\":\"Fabricio Nogueira\",\n\"veiculo_proprietario_cpf\": \"13700532741\",\n\"veiculo_obs\": \"Cadastro Teste API\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/veic-cad",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"veic-cad"
+							]
+						},
+						"description": "Método de cadastro do veículo dentro do padrão de dados apresentado no método veic-estrutura.\n\nIMPORTANTE:\n\nO método retornará no campo data o ID do veículo registrado no DataDrive. Este ID será usado em todas as interações deste veículo com a API. Registre-o em sua base de dados."
+					},
+					"response": []
+				},
+				{
+					"name": "Veículo Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": true,\n\"id\":\"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\",\n\"veiculo_nome\": \"RENAULT/CLIO AUT 10 16VS\",\n\"veiculo_renavam\":\"00797230025\",\n\"veiculo_placa\": \"AKR5B56\", \n\"veiculo_chassi\":\"93YLB06053J386336\",\n\"veiculo_ano\": \"2002\",\n\"veiculo_uf\":\"PR\",\n\"veiculo_cor\":\"Verde\",\n\"veiculo_proprietario_nome\":\"Fabricio Nogueira\",\n\"veiculo_proprietario_cpf\": \"13700532741\",\n\"veiculo_obs\": \"Cadastro Teste API\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/veic-edit",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"veic-edit"
+							]
+						},
+						"description": "Método de edição do veículo dentro do padrão de dados apresentado no método veic-estrutura.\n\nIMPORTANTE:\n\nEnvie o campo ID com o ID do veículo para identificar o registro desejado para a edição."
+					},
+					"response": []
+				},
+				{
+					"name": "Veículo Info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\", \"id\":\"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\"}",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/veic-info",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"veic-info"
+							]
+						},
+						"description": "Método para recuperar dados do veículo através do ID do veículo."
+					},
+					"response": []
+				},
+				{
+					"name": "Veículo Del",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\",\n\"key\": \"{{CACHE-KEY}}\",\n\"id\":\"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\",\n\"sandbox\":false\n}",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/veic-del",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"veic-del"
+							]
+						},
+						"description": "Método de exclusão do veículo através do ID do veículo."
+					},
+					"response": []
+				}
+			],
+			"description": "Métodos de Cadastros, Edição, Consulta e Exclusão de Veículos\n\n<img src=\"https://content.pstmn.io/9edcf4d2-faff-444b-ba90-dbdad3e58d2e/dGVsYS12ZWljdWxvLmpwZw==\">\n\nIMPORTANTE:\n\nMétodos que registram gravação de dados na API retornam no campo data o ID do novo registro gerado. Este ID será utilizado em todas futuras interações. É fundamental que você o registre em sua base de dados."
+		},
+		{
+			"name": "ACOMP",
+			"item": [
+				{
+					"name": "Acomp Estrutura",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-tipo-estrutura",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-tipo-estrutura"
+							]
+						},
+						"description": "Método gerador de documentação dos diferentes tipos de acompanhamentos. Os acompahamentos estão ligados aos motoristas, veículos os filtros específicos (ex: número de protocolo ).\n\nCampos puramente informativos:\n\n- tipo - ID do tipo do acompanhamento;\n- nome - Nome do tipo do acompanhamento;\n- estado - Estado onde consulta é realizada;\n- uf - UF onde a consulta é realizada;\n- local - Órgão associado à consulta;\n- foto - Bool se a consulta gera printscreen;\n- link - Entidade relacionada ao acompanhamento;\n- main_title - Título do bloco main do resultado com sucesso;\n- extra_title - Título do bloco extra do resultado com sucesso;\n    \n\nExemplo:\n\n``` json\n{ \n  \"tipo\": 4,\n  \"nome\": \"Acompanhamento Suspensão\",\n  \"estado\": \"Rio de Janeiro\",\n  \"uf\": \"RJ\",\n  \"local\": \"Detran RJ\",\n  \"foto\": true,\n  \"link\": \"motorista\",\n  \"main_title\": \"Processo de Suspensão\",\n  \"extra_title\": \"Recursos\"\n}\n\n ```\n\nCampos Base - Informações que a entidade precisa ter preenchida para a realização do cadastro do tipo do acompanhamento. Exemplo:\n\n``` json\ndados_base\": {\n                \"motorista_cpf\": \"CPF\",\n                \"motorista_cnh\": \"Número da CNH\",\n                \"motorista_nascimento\": \"Data de Nascimento\",\n                \"motorista_cnh_data3\": \"Data da 1º Habilitação\",\n                \"motorista_nome\": \"Nome do Motorista\",\n                \"motorista_cnh_uf\": \"UF da CNH\"\n            }\n\n ```\n\nDados Resultantes - O resultado com sucesso da sincronização do acompanhamento como o órgão pode gerar dois grupos de dados ( main e extra ).\n\nO result_data informa o formato das informações dentro dos grupos de dados do tipo do acompanhamento. Obs: A existência do grupo extra depende do esquema de dados do órgão consultado.\n\nSegue exemplo:\n\n``` json\n{\n    \"tipo\": \"info\",\n    \"formato\": \"str\",\n    \"null\": false,\n    \"skip_valida\": \"\",\n    \"valida\": \"is_numeric\",\n    \"desc\": \"Pontos\",\n    \"campo\": \"pts\"\n}\n\n ```\n\nPor fim, alguns acompahamentos necessitam do envio de dados de consulta que não estão no cadastro de motoristas ou veículos. São os acompanhamentos de infrações específicas. Para esses, o DataDrive preve um campo chamado dados_query onde são apresentados os dados necessários que devem ser enviados no cadastro do acompanhamento.\n\nPor exemplo:\n\n``` json\n\"dados_query\": {\n    \"v1\": \"Auto de Infração\",\n    \"v2\": \"Processo\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-tipo-status",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-tipo-status"
+							]
+						},
+						"description": "Método de consulta do status atual dos acompanhamentos no DataDrive.\n\nPrincipais informações:\n\n- tipo - Tipo do acompanhamento;\n- max_erro_cli - Número máximo erros relacionados ao cliente antes do status de falha crítica;\n- max_erro_infra - Número máximo erros relacionados à infraestrutura dos sites consultados antes do status de falha crítica;\n- time_out - Timestamp de retorno ao funcionamento no caso de problemas nos órgãos monitorados;\n- exec - Se as consultas do acompanhamento estão sendo realizadas no DataDrive;\n- status - Se o acompanhamento está ativo no DataDrive;"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Cad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"sandbox\": true,\n  \"acomp_tipo\": \"6\",\n  \"acomp_periodo\": \"quinzenal\",\n  \"motorista\": \"NTZ5c3ljQ25tQ0lZMW9QRlZjem93Zz09\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-cad",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-cad"
+							]
+						},
+						"description": "Método de cadastro do acompanhamento dentro do padrão de dados apresentado no método acomp-estrutura.\n\nIMPORTANTE:\n\nO método retornará no campo data o ID do acompanhamento registrado no DataDrive. Este ID será usado em todas as interações futuras deste acompanhamento com a API. Registre-o em sua base de dados.\n\nDADOS PARA CADASTRO:\n\n``` json\n{\n  \"acomp_tipo\": \"33\",\n  \"acomp_periodo\": \"quinzenal\",\n  \"motorista\": \"NTZ5c3ljQ25tQ0lZMW9QRlZjem93Zz09\",\n  \"login\": \"NTZ5c3ljQ25tQ0lZMW9QRlZjem93Zz09\"\n   \"v1\": \"A52448846\",\n   \"v2\": \"E-12/062/445582/2017\"  \n}\n\n ```\n\n- acomp_tipo: tipo do acompanhamento\n- acomp_periodo: perido desejado para as sincronizações\n- motorista/veiculo: ID da entidade associado ao novo acompanhamento\n    \n\nCampos Extras:\n\nO campo login informa o ID do login que deverá ser realizado antes da sincronização do acompanhamento. A necessidade de login no acompanhamento pode ser verificada através do método acomp-estutura:\n\nOs campos v1 e v2 são campos dinâmicos adicionados no cadastro para passar informações extras necessárias para o regsitro de acompanhamentos específicos. Esses campos podem ser recuperados pelo método acomp-estrutura no campo dados_query:\n\n``` json\n\"dados_query\": {\n   \"v1\": \"Auto de Infração\",\n   \"v2\": \"Processo\"\n}\n\n ```\n\nPROCESSAMENTO:\n\nA partir do cadastro confirmado, o acompanhamento estará apto para sua primeira tentativa de sincronização. O tempo para a sincronização pode variar devido a diversos fatores, como por exemplo:\n\n- instabilidade no órgão/site;\n- fila de processamentos;\n- manutenção no processador do DataDrive;\n- horário do dia/noite mais propenso para o processamento;\n    \n\nPRIMEIRA SINCRONIZAÇÃO E NOVIDADES:\n\nEm caso de sucesso, ou no caso de novidades em sincronizações futuras, o acompanhamento será publicado na lista de novidades. Esta lista pode ser recuperada pelo método acomp-news. Para dar baixa no alerta e recuperar as informações apuradas, utilize o método acomp-info com a opção cofirma = true.\n\nApós a sincronização, a próxima consulta do acompanhamento vai ser agendada de acordo com a periodicidade definida no cadastro do acompanhamento.\n\nFALHA CRÍTICA:\n\nA configuração de falhas do acompanhamento pode ser recuperada pelo método acomp-tipo-status.\n\nCaso em suas tentativas de sincronização o acompanhamento apresente falhas, sejam do cliente (ex: dados de consulta inválidos), ou da infraestrutura (ex: erro no captcha) a ponto e ultrapassar o limite definido na configuração de falhas, o acompanhamento receberá o status de falha crítica.\n\nO acompanhamento em falha crítica não é mais processado pelo DataDrive e fica publicado na lista de falhas críticas. Esta lista pode ser recuperada pelo método acomp-fail.\n\nEste acompanhamento ainda pode ser recuperado. Para isso é necessário corrigir os dados falhos, que podem ser no motorista, no veículo ou na query específica do acompanhamento. Após esse processo é necessário realizar o reset do acompanhamento através do método acomp-reset."
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"id\":\"WFpWYXVGWFR3Ykhqa3g3bHB3RnlMdz09\",\n  \"confirma\": true\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-info",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-info"
+							]
+						},
+						"description": "Método para recuperar dados do acompanhamento através do ID do acompanhamento.\n\nIMPORTANTE:\n\nO campo confirma = true realiza a baixa do acompanhamento da lista de novidades. Utilize-o quando for copiar os dados apurados pelo DataDrive para seu banco de dados."
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Last Photo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"id\":\"WFpWYXVGWFR3Ykhqa3g3bHB3RnlMdz09\",\n  \"confirma\": true\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-last-print",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-last-print"
+							]
+						},
+						"description": "Método para recuperar a(s) foto(s) da últimao sincronização com sucesso.\n\n``` json\n{\n    \"status\": 1,\n    \"status_code\": 1,\n    \"status_msg\": \"Request #1692015513-700 realizado com sucesso\",\n    \"data\": {\n        \"2023-08-11\": [\n            \"base64 IMG 1\",\n            \"base64 IMG N\"\n        ]\n    }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"sandbox\": false,\n  \"id\":\"WHZrSTlQUTVVOFYvdDNBcjRkdWVYUT09\",\n  \"acomp_periodo\": \"mensal\",\n  \"acomp_obs\":\"Acompanhamento editado pela API\",\n  \"tag_data\": \"tag exemplo, api\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-edit",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-edit"
+							]
+						},
+						"description": "Método para edição simples do acompanhamento através do ID do acompanhamento. Os campos possíveis de edição são limitados visto que os principais dados do acompanhamento são registrados no motorista ou no veículo. Campos:\n\n``` json\n{\n  \"acomp_periodo\": \"mensal\",\n  \"acomp_obs\":\"Acompanhamento editado pela API\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp News",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"limit\": \"50\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-news",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-news"
+							]
+						},
+						"description": "Método para obtenção da listagem de acompanhamentos com primeira sincornização ou novidades regsitradas pelo DataDrive.\n\nPara o correto funcionamento do sistema de alertas, é necessário que as novidades sejam apuradas e tenham suas baixas realizadas o quanto antes.\n\nCaso uma novidade não tenha sido baixada e uma nova sincronização localize uma outra novidade, o sistema continuará alertando sobre a primeira novidade que não recebeu baixa. Isso pode gerar problemas e perda de alertas. Por isso é importante definir um cronjob diário para verificação da lista gerada por acomp-news.\n\nExemplo de resultado:\n\n``` json\n{\n    \"id\": \"WGRQVllWS1RYVHgyYVhOdXRucUtTUT09\",\n    \"tipo\": \"22\",\n    \"dt_news\": \"2023-08-08 11:36:08\",\n    \"dt_last\": \"2023-08-08 11:35:50\",\n    \"link\": \"veiculo\",\n    \"id_link\": \"Y0tRSmIwUkMrT0N0ZVBwcGs1WVVkQT09\",\n    \"link_nome\": \"LBA7201\",\n    \"link_consulta\": {\n        \"veiculo_placa\": \"Placa do Veículo\",\n        \"veiculo_renavam\": \"Renavam do Veículo\"\n    }\n}\n\n ```\n\nCampos:\n\n- id - Id do acompanhamento\n- tipo - tipo do acompanhamento\n- dt_news - data em que a novidade foi apurada\n- dt_last - data da última sincronização\n- link - tipo de entidade vinculada ao acompanhamento\n- id_link - id da entidade\n- link_nome - nome/identificação da entidade\n- link_consulta - campos utilizados na realização da consulta ao órgão"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Fail List",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"limit\": \"50\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-fail",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-fail"
+							]
+						},
+						"description": "Método para obtenção da listagem de acompanhamentos em falha crítica, ou seja, que estão paralisados por causa de problemas.\n\nExemplo de resultado:\n\n``` json\n{\n    \"id\": \"cHg3Sm9WOW4xVDRVVFN6d1dmaXBmUT09\",\n    \"tipo\": \"39\",\n    \"dt_last\": \"2023-08-08 11:38:56\",\n    \"erro_cli\": \"0\",\n    \"erro_infra\": \"3\",\n    \"acomp_obs\": null,\n    \"link\": \"veiculo\",\n    \"id_link\": \"Y0tRSmIwUkMrT0N0ZVBwcGs1WVVkQT09\",\n    \"link_nome\": \"LRT7501\",\n    \"link_consulta\": {\n        \"veiculo_placa\": \"Placa do Veículo\",\n        \"veiculo_renavam\": \"Renavam do Veículo\"\n    }\n}\n\n ```\n\nCampos:\n\n- id - Id do acompanhamento\n- tipo - tipo do acompanhamento\n- dt_last - data da última sincronização\n- erro_cli - Nº de erros do cliente apurados;\n- erro_infra - Nº de erros de Infra aputados;\n- link - tipo de entidade vinculada ao acompanhamento\n- id_link - id da entidade\n- link_nome - nome/identificação da entidade\n- link_consulta - campos utilizados na realização da consulta ao órgão\n    \n\nPRINCIPAIS ERROS DO CLIENTE:\n\n- dados faltando no registro do motorista ou veículo;\n- dados errados ou desatualizados no registro do motorista ou veículo;\n- dados errados ou desatualizados na query de acompanhamentos específicos (ex: protocolo )\n- acompanhamentos registrados em orgãos incorretos; (ex: UF incompatível com CNH )\n    \n\nPRINCIPAIS ERROS DE INFRA:\n\n- site do orgão fora do ar;\n- site do órgão com lentidão;\n- site do órgão com falha na publicação de páginas específicas;\n- site do órgão com falha na consulta em banco de dados específicos;\n- erro no processamento do datadrive;"
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Reset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"id\":\"dXlPVVZyb3A5WUFQQlI3cnZWTURjZz09\",\n  \"sandbox\": false\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-reset",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-reset"
+							]
+						},
+						"description": "Método para gerar RESET do acompanhamento e sua reativação no sistema através do ID do acompanhamento.\n\nO reset pode ser usado simplesmente para limpar os dados do acompanhamento ou para reativar um acompahamento em falha crítica após a correção dos dados incorretos do motorista, veículo ou query.\n\nIMPORTANTE:\n\nTodos os logs das sincronizações são apagados, bem como imagens e alertas de novidades.\n\nPROCESSAMENTO:\n\nApós a execução do método o status acompanhamento será alterado para 'Em Manutenção'. O registro do acompanhamento será enviado para uma fila de processamento de limpeza onde serão apagados dados de mídias em servidores de arquivos em nuvem e a sincronizações de dados dos servidores do DataDrive. Este processo pode demorar até 2 horas.\n\nApós a conclusão das rotinas, o acompanhamento receberá o status de 'Ativo: Aguardando primeira sincronização' e entrará na lista padrão de processamento do DataDrive."
+					},
+					"response": []
+				},
+				{
+					"name": "Acomp Del",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"token\": \"{{TOKEN}}\",\n  \"key\": \"{{CACHE-KEY}}\",\n  \"id\":\"dXlPVVZyb3A5WUFQQlI3cnZWTURjZz09\",\n  \"sandbox\": true\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-del",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-del"
+							]
+						},
+						"description": "Método de exclusão completa do acompanhamento através do ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Métodos de Cadastros, Edição, Consulta e Exclusão de Acompanhamentos\n\n<img src=\"https://content.pstmn.io/33fb63dd-6889-44e6-9b99-c15554e7c54f/dGVsYS1hY29tcC5qcGc=\">\n\nIMPORTANTE:\n\nMétodos que registram gravação de dados na API retornam no campo data o ID do novo registro gerado. Este ID será utilizado em todas futuras interações. É fundamental que você o registre em sua base de dados."
+		},
+		{
+			"name": "ACOMP LOGIN",
+			"item": [
+				{
+					"name": "Login Locais",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-locais",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-locais"
+							]
+						},
+						"description": "Listagem de locais/órgãos onde o DataDrive possui previsão de funcionamento de logins;\n\nExemplo de retorno:\n\n``` json\n{\n    \"tipo\": 1,\n    \"nome\": \"DER-MG - Portal de Serviços\",\n    \"uf\": \"MG\",\n    \"unico\": false,\n    \"link\": \"id_cli\",\n    \"data\": {\n        \"doc\": {\n            \"nome\": \"CPF ou CNPJ\",\n            \"formato\": \"num\",\n            \"tipo\": \"id\",\n            \"mask\": \"mask_so_num\"\n        },\n        \"pwd\": {\n            \"nome\": \"Senha\",\n            \"formato\": \"password\",\n            \"tipo\": \"pwd\",\n            \"mask\": \"\"\n        }\n    }\n    \"acomp_tipo\": [\n                33\n            ]\n}\n\n ```\n\n- tipo: tipo do login\n- nome: nome atribuido ao login\n- uf: UF do login\n- data: formato das informações para cadastro do login novo\n- acomp_tipo: tipos de acompanhamentos utilizadores do login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n   \"token\":\"{{TOKEN}}\", \n   \"key\": \"{{CACHE-KEY}}\", \n   \"id\":\"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-status",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-status"
+							]
+						},
+						"description": "Método de verificação do Status do Login através do ID. Retorno:\n\n``` json\n{\n    \"id\": \"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\",\n    \"local\": \"1\",\n    \"desc\": \"Login Cadastrado pela API\",\n    \"data\": \"N21DOU1FcklXdExzQVRURTJmazgyWUR2b2NIdlpIdFBraXErYmg1VElTTXNPbGMvanUraUZxZGs3UXU0dG1peA==\",\n    \"dt_cad\": \"2023-08-09 18:42:23\",\n    \"dt_exec\": null,\n    \"erro_qtd\": null,\n    \"valid\": \"1\",\n    \"cliente\": \"Cliente API\"\n}\n\n ```\n\n- id - id do login;\n- local - local/órgão relacionado ao login;\n- desc - Descrição/Observações do login;\n- data - Valor do login para uso interno do DataDrive;\n- dt_cad - Data do cadastro do login;\n- dt_exec - Última utilização do login;\n- erro_qtd - Quantidade de erros apuradas no uso do login;\n- valid - Validade do login;\n- cliente - Cliente associado ao login;\n    \n\nERRO QTD:\n\nNúmero de erros registrados em sequencia na utilização do login. A partir de X erros o login é considerado inválido;\n\nVALID:\n\n0 = inválido\n\n1 = Aguardando validação; (primeira utilização com sucesso)\n\n2 = Validado com sucesso;"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Cad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": false,\n\"local\": \"1\",\n\"desc\": \"Login Cadastrado pela API\", \n\"doc\": \"0817431988\", \n\"pwd\":\"temp1234\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-cad",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-cad"
+							]
+						},
+						"description": "Método de Cadastro de do login. Exemplo:\n\n``` json\n{\n    \"local\": \"1\",\n    \"desc\": \"Login Cadastrado pela API\",\n    \"doc\": \"0814131988\",\n    \"pwd\": \"temp1234\"\n}\n\n ```\n\nlocal - Local/Órgão para o registro do login\n\ndesc - Descrição/Observações do login;\n\nCAMPOS DINÂMICOS:\n\nOs campos do login podem variar de local para local. Para recuperar os campos necessários para o cadastro utilize o método login-locais."
+					},
+					"response": []
+				},
+				{
+					"name": "Login Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": \"0\",\n\"id\": \"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\",\n\"desc\": \"Login Cadastrado pela API Update\", \n\"doc\": \"01411319728\", \n\"pwd\":\"temp1234\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-edit",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-edit"
+							]
+						},
+						"description": "Método para edição do Login através do ID login.\n\nIMPORTANTE:\n\nCom exceção do campo DESC, o formato e nomenclatura dos outros campos podem variar de acordo com o tipo do login. Utilize o método acomp-login-locais para verificar os padrões aplicados."
+					},
+					"response": []
+				},
+				{
+					"name": "Login Fail List",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "data",
+									"value": "{\"token\":\"{{TOKEN}}\", \"key\": \"{{CACHE-KEY}}\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-fail-list",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-fail-list"
+							]
+						},
+						"description": "Listagem de logins registrados no DataDrive que foram considerados falhos após diversas tentativas de sincronização com falha no login. A lista permite localizar logins obsoletos para correção através do método login-edit\n\nExemplo de retorno:\n\n``` json\n{\n    \"id\": \"VHUyQ2dSNnJkV254Q1g2eWxXMEViUT09\",\n    \"local\": \"1\",\n    \"desc\": \"Login Cadastrado pela API\",\n    \"erro_qtd\": \"5\",\n    \"exec_qtd\": \"12\",\n    \"dt_cad\": \"2023-08-01 12:00:43\",\n    \"dt_exec\": \"2023-08-09 18:42:23\",\n    \"dt_erro\": \"2023-08-09 18:42:23\"\n}\n\n ```\n\n- id: ID do login com falha;\n- local: local do login com falha;\n- desc: descrição do login;\n- erro_qtd: número de erros seguidos;\n- exec_qtd: número de veses que o login foi utilizado;\n- dt_cad: data de cadatro do acompanhamento;\n- dt_exec: data da última utilização do login;\n- dt_erro: data do erro que desabilitou o login;"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Fail Acomp Restart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": true,\n\"id\": \"WHZrSTlQUTVVOFYvdDNBcjRkdWVYUT09\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-fail-restart",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-fail-restart"
+							]
+						},
+						"description": "Método para reativar acompanhamentos que estejam em falha crítica por erro de login através do envio do ID do login.\n\nAções internas do método:\n\n- Procura acompanhamentos que sejam do tipo atendido pelo login e que não estejam associados ao login e promove a associação. Essa ação foi desenvolvida para atender casos onde um acompanhamento existia no órgão sem a necessidade de login e passou a ter a necessidade após uma mudança no site monitorado. Desta forma evita do cliente ter que editar um por um realizando a associação.\n- Percorre todos os acompanhamentos que tem relação com o login e que estão desativados por erro de login. Em cima dessa lista promove a reativação e a redução da contabilidade de erro em uma unidade. Desta forma o acompanhamento volta a rodar e tem uma nova chance de obter sucesso."
+					},
+					"response": []
+				},
+				{
+					"name": "Login Del",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n\"token\":\"{{TOKEN}}\", \n\"key\": \"{{CACHE-KEY}}\",\n\"sandbox\": true,\n\"id\": \"NkNKMVR4bVBTcnVWbWppeVVmcDVnUT09\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/dd-api/acomp-login-del",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"dd-api",
+								"acomp-login-del"
+							]
+						},
+						"description": "Método para exclusão do login mediante o envio do ID do login.\n\nIMPORTANTE:  \n\nNão é possível apagar logins que estejam sendo usados por acompanhamentos ativos no DataDrive. Nesse caso o sistema retornará a falha e a lista de IDs de acompanhamentos que estão associados ao login."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestão de registros de login para acompanhamentos em órgãos com login antes da consulta.\n\n<img src=\"https://content.pstmn.io/6ad3cb1b-de08-488f-add9-030326e4950e/dGVsYS1sb2dpbi5qcGc=\">\n\nIMPORTANTE:  \n\nMétodos que registram gravação de dados na API retornam no campo data o ID do novo registro gerado. Este ID será utilizado em todas futuras interações. É fundamental que você o registre em sua base de dados."
+		},
+		{
+			"name": "INTEGRAÇÃO",
+			"item": [
+				{
+					"name": "Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\"data\":\n    {\"cards\":\n        {\"edges\":\n            [\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                },\n                {\"node\":\n                    {\"fields\":\n                        [\n                            {\"name\":\"motorista_nome\",\"value\":\"Luiz Paulo Ribeiro\"},\n                            {\"name\":\"motorista_cnh\",\"value\":\"0324073511\"},\n                            {\"name\":\"motorista_cpf\",\"value\":\"38220466719\"},\n                            {\"name\":\"motorista_cnh_uf\",\"value\":\"RJ\"}\n                        ]\n                    }\n                }\n            ]\n        }\n    }\n}\n\n",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "CACHE-KEY",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
